@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // /* eslint-disable @typescript-eslint/no-explicit-any */
 // export const dynamic = 'force-dynamic';
 
@@ -201,8 +202,6 @@
 
 
 
-export const dynamic = 'force-dynamic';
-
 import StarRating from "@/components/CommonElement/StarRating";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -211,33 +210,21 @@ import { Button } from "@/components/UI/button";
 import { dummyReviews } from "@/staticData/AllStaticData";
 import APICard from "@/app/arrivals/APICard";
 
-// Define the type for ProductPageProps
-interface ProductPageProps {
-  params: { productId: string };
-}
+// Since you're using dynamic routes, the correct type for the page props is `PageProps`
+export default async function ProductPage({ params }: { params: { productId: string } }) {
+  const { productId } = params; // Access productId from params
 
-// Update this line to correctly type the params
-export default async function ProductPage({ params }: ProductPageProps) {
   // Fetch product data based on productId
-  const res = await fetch(`https://dummyjson.com/products/${params.productId}`);
+  const res = await fetch(`https://dummyjson.com/products/${productId}`);
 
   if (!res.ok) return notFound();
 
   const product = await res.json();
 
-  // Define a type for suggested products
-  type SuggestedProduct = {
-    id: number;
-    title: string;
-    thumbnail: string;
-    rating: number;
-    price: number;
-    discountPercentage: number;
-  };
-  
+  // Suggested Products
   const topSellingProductsRes = await fetch('https://dummyjson.com/products/category/tops');
   const topSellingProductsData = await topSellingProductsRes.json();
-  const suggestedProducts: SuggestedProduct[] = topSellingProductsData.products;
+  const suggestedProducts = topSellingProductsData.products;
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
@@ -367,11 +354,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
           ))}
         </div>
       </div>
+
       {/* Suggested Products */}
       <div className="mt-12">
         <h1 className="text-4xl font-bold mb-5">Suggested Products</h1>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {suggestedProducts.map((item: SuggestedProduct) => (
+          {suggestedProducts.map((item: any) => (
             <APICard
               key={item.id}
               id={item.id}
