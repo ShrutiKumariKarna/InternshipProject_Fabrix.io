@@ -200,8 +200,6 @@
 // }
 
 
-
-
 import StarRating from "@/components/CommonElement/StarRating";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -211,8 +209,8 @@ import { dummyReviews } from "@/staticData/AllStaticData";
 import APICard from "@/app/arrivals/APICard";
 
 // Since you're using dynamic routes, the correct type for the page props is `PageProps`
-export default async function ProductPage({ params }: { params: { productId: string } }) {
-  const { productId } = params; // Access productId from params
+export default async function ProductPage({ params }: {  params: Promise<{ productId: string }> }) {
+  const { productId } = await params; // Access productId from params
 
   // Fetch product data based on productId
   const res = await fetch(`https://dummyjson.com/products/${productId}`);
@@ -236,12 +234,13 @@ export default async function ProductPage({ params }: { params: { productId: str
           <div className="w-[150px] flex flex-col gap-4">
             {product.images?.slice(0, 3).map((img: string, i: number) => (
               <Image
-                key={i}
-                src={img}
-                alt={`Preview ${i + 1} of ${product.title}`}
-                width={250}
-                height={250}
-                className="w-full h-full object-cover rounded-md border cursor-pointer bg-secondary"
+              key={i}
+              src={img}
+              alt={`Preview ${i + 1} of ${product.title}`}
+              width={250}
+              height={250}
+              style={{ width: "100%", height: "auto" }}
+              className="object-cover rounded-md border cursor-pointer bg-secondary"
               />
             ))}
           </div>
@@ -252,6 +251,7 @@ export default async function ProductPage({ params }: { params: { productId: str
             alt={product.title}
             width={400}
             height={300}
+            style={{ width: "100%", height: "auto" }}
             className="rounded-xl shadow object-cover bg-secondary"
           />
         </div>
